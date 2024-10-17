@@ -12,46 +12,43 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/product")
 public class ProductRestController {
-    @GetMapping("/hello")
-    public String welcome(){
-        return "Hello product";
-    }
 
     @Autowired
     ProductRepository productRepository;
 
     @GetMapping()
-    public List<Product> findAll(){
+    public List<Product> list() {
         return productRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable long id){
-        Optional<Product> customer = productRepository.findById(id);
-        if (customer.isPresent()){
-            return new ResponseEntity<>(customer.get(), HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public Product get(@PathVariable(name = "id") long id) {
+        return productRepository.findById(id).get();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> put(@PathVariable long id,@RequestBody Product input){
-        Optional<Product> optionalCustomer = productRepository.findById(id);
-        if(optionalCustomer.isPresent()){
-            Product newCustomer = optionalCustomer.get();
-            newCustomer.setName(input.getName());
-            newCustomer.setCode(input.getCode());
-            Product save = productRepository.save(newCustomer);
-            return new ResponseEntity<>(save, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> put(@PathVariable(name = "id") long id, @RequestBody Product input) {
+        Product find = productRepository.findById(id).get();
+        if(find != null){
+            find.setCode(input.getCode());
+            find.setName(input.getName());
         }
+        Product save = productRepository.save(find);
+        return ResponseEntity.ok(save);
     }
 
     @PostMapping
-    public ResponseEntity<?> post(@RequestBody Product input){
-        Product save=productRepository.save(input);
+    public ResponseEntity<?> post(@RequestBody Product input) {
+        Product save = productRepository.save(input);
         return ResponseEntity.ok(save);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(name = "id") long id) {
+        Optional<Product> findById = productRepository.findById(id);
+        if(findById.get() != null){
+            productRepository.delete(findById.get());
+        }
+        return ResponseEntity.ok().build();
     }
 }
