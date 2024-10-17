@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 public class Transaction {
+
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     private String reference;
     private String ibanAccount;
