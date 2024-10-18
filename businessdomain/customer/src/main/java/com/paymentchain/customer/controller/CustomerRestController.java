@@ -9,6 +9,7 @@ import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.bind.annotation.*;
@@ -125,6 +126,14 @@ public class CustomerRestController {
                 .retrieve().bodyToMono(JsonNode.class).block();
         String name = block.get("name").asText();
         return name;
+    }
+
+    @Autowired
+    private Environment env;
+
+    @GetMapping("/get")
+    public String check(){
+        return "Your entorn is: " + env.getProperty("custom.activeProfileName");
     }
 
     /**
